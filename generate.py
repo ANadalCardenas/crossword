@@ -1,5 +1,4 @@
 import sys
-from pprint import pprint
 from itertools import product
 from collections import defaultdict
 
