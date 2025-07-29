@@ -254,12 +254,10 @@ class CrosswordCreator():
         # Gets the variables that are not yet in assignment.
         sub_domains = {k: v for k, v in self.domains.items() if k not in assignment}
         # Calcs the ordered list of domain's values with the above function
-        ###
-        print("sub_domains :",sub_domains)
-        for k in sub_domains.items():
-            print("k :",k[0])
-        ###
-        #remaining_values = {k: {self.order_domain_values(k, assignment)[0]} for k in sub_domains.keys()}
+        
+        for k in sub_domains.keys():
+            print("k :",k)
+        remaining_values = {k: {self.order_domain_values(k, assignment)[0]} for k in sub_domains.keys()}
         # Orders the last dictionary to find the variable with the lowest degree
         ordered_remaining_values = dict(sorted(remaining_values.items(), key=lambda item: item[1]))
         # Gets the lowest value
@@ -274,59 +272,33 @@ class CrosswordCreator():
         
         return dict(sorted(degree_variables.items(), key=lambda item: item[1], reverse = True))[0]
 
-        
 
-    def backtrack(self, assignment):
-        """
-        Using Backtracking Search, take as input a partial assignment for the
-        crossword and return a complete assignment if possible to do so.
-
-        `assignment` is a mapping from variables (keys) to words (values).
-
-        If no assignment is possible, return None.
-        
-        # If all the domain's variables are in current assignment, resturn this assignment as solution
-        if self.assignment_complete(assignment):
-            return assignment
-        
-        # Else, selects an unasignment value with the function above (the variable with the lowets remaining values in this domain and highest degree)
-        val = self.select_unassigned_variable(assignment)
-        # Adds a new element at the current assignment with the pair {val: selected word}
-        new_assignment = assignment.copy()
-        new_assignment.update(val)
-
-        self.backtrack(new_assignment)
-
-        return None
-        """
     def backtrack(self, assignment):
         """
         Using Backtracking Search, return a complete assignment if possible to do so.
         If no solution is possible, return None.
         """
-        # Si l'assignació és completa, retornem el resultat
+        # If there is a solution, return it
         if len(assignment) == len(self.crossword.variables):
             return assignment
-
-        # Seleccionem una variable no assignada
-        var = self.select_unassigned_variable(assignment)
-
-        # Provem els valors del seu domini (ordenats per mínimes restriccions)
+        # Selects a no assignet variable
+        var = next(iter(self.select_unassigned_variable(assignment).keys()))
+        # Tries all its domains values (ordered by lower restriction)
         for value in self.order_domain_values(var, assignment):
-            # Assignem provisionalment el valor
+            # Assigns a provisional value
             new_assignment = assignment.copy()
             new_assignment[var] = value
 
             # Comprovem si és consistent
             if self.consistent(new_assignment):
                 # Opcional: inference amb AC-3
-                # domains_backup = deepcopy(self.domains)
-                # self.domains[var] = {value}
-                # if self.ac3({(neighbor, var) for neighbor in self.crossword.neighbors(var)}):
-                result = self.backtrack(new_assignment)
+                domains_backup = self.domains.copy()
+                self.domains[var] = {value}
+                if self.ac3({(neighbor, var) for neighbor in self.crossword.neighbors(var)}):
+                    result = self.backtrack(new_assignment)
                 if result is not None:
                     return result
-                # self.domains = domains_backup
+                self.domains = domains_backup
 
         # Si cap valor condueix a una solució, retrocedim
         return None
