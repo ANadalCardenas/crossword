@@ -270,7 +270,7 @@ class CrosswordCreator():
         for value in self.order_domain_values(var, assignment):
             # Assigns a provisional value
             new_assignment = assignment.copy()
-            new_assignment[var] = {value}
+            new_assignment[var] = value
             # checks for consistency
             if self.consistent(new_assignment):
                 # Optional: inference with ac3 function
