@@ -278,8 +278,8 @@ class CrosswordCreator():
                 self.domains[var] = {value}
                 if self.ac3({(neighbor, var) for neighbor in self.crossword.neighbors(var)}):
                     result = self.backtrack(new_assignment)
-                if result is not None:
-                    return result
+                    if result is not None:
+                        return result
                 self.domains = domains_backup
         # If there is no solution, it returns None
         return None
