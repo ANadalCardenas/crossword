@@ -182,20 +182,19 @@ class CrosswordCreator():
         """
         # Checks if all values are different (there are not the same word in more than one space)
         values = set()
-        for var_x, words_x in assignment.items():
-            for word_x in words_x:
-                # Calculates the intersection between the words already inserted and the current word.
-                # Checks if the length of "word" is equal than the "length" parameter of current Variable
-                if len(word_x) != var_x.length or (word_x in values):
-                    return False
-                values.add(word_x)
+        for var_x, word_x in assignment.items():
+            # Calculates the intersection between the words already inserted and the current word.
+            # Checks if the length of "word" is equal than the "length" parameter of current Variable
+            if len(word_x) != var_x.length or (word_x in values):
+                return False
+            values.add(word_x)
             # Checks if the overlap cells have at least one valid option of words for both Variables
-            for var_y, words_y in assignment.items():
+            for var_y, word_y in assignment.items():
                 if not var_x.__eq__(var_y):
                     overlap_cells = self.crossword.overlaps[var_x,var_y]
                     if overlap_cells:
                         i, j = overlap_cells
-                        if word_x[i] != words_y[j]:
+                        if word_x[i] != word_y[j]:
                             return False
         return True
         
