@@ -240,7 +240,7 @@ class CrosswordCreator():
         # Gets the variables that are not yet in assignment.
         sub_domains = {k: v for k, v in self.domains.items() if k not in assignment}
         # Calcs the ordered list of domain's values with the above function
-        remaining_values = {k: {self.order_domain_values(k, assignment)[0]} for k in sub_domains.keys()}
+        remaining_values = {k: self.order_domain_values(k, assignment)[0]for k in sub_domains.keys() if self.order_domain_values(k, assignment)}
         # Orders the last dictionary to find the variable with the lowest degree
         ordered_remaining_values = dict(sorted(remaining_values.items(), key=lambda item: item[1]))
         # Gets the lowest value
@@ -249,10 +249,9 @@ class CrosswordCreator():
         # If there is not a tie, return the unique variable in tie_variables
         if len(tie_variables) == 1:
             return next(iter(tie_variables))
-        for var in list(tie_variables).items():
+        degree_variables = {}
+        for var in list(tie_variables):
             degree_variables = {k : sum(self.crossword.overlaps[var,k]) for k in self.domains.keys() if self.crossword.overlaps[var,k] and not var.__eq__(k)}
-        
-        
         return next(iter(sorted(degree_variables, key=degree_variables.get, reverse=True)))
 
 
