@@ -204,9 +204,6 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        # Checks if current var has already an assignment value
-        if var in assignment.keys():
-            return [0]
         # Created de dictionary where the function will order the words of the domain of "var". At first, all values have a 0 value. 
         # All of them haven't eliminated any possible value of their neighboring cells yet
         result = defaultdict(int)
