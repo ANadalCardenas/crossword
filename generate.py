@@ -169,10 +169,7 @@ class CrosswordCreator():
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        for words in assignment.values():
-            if len(words) != 1:
-                return False
-        return True
+        return len(assignment) == len(self.crossword.variables)
 
 
     def consistent(self, assignment):
