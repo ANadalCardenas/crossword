@@ -248,7 +248,7 @@ class CrosswordCreator():
         tie_variables = {k: v for k , v in ordered_remaining_values.items() if ordered_remaining_values[k] == lowest_value}
         # If there is not a tie, return the unique variable in tie_variables
         if len(tie_variables) == 1:
-            return tie_variables
+            return next(iter(tie_variables))
         for var in list(tie_variables).items():
             degree_variables = {k : sum(self.crossword.overlaps[var,k]) for k in self.domains.keys() if self.crossword.overlaps[var,k] and not var.__eq__(k)}
         
