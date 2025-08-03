@@ -1,7 +1,9 @@
 Crossword Solver
+
 A Constraint Satisfaction Problem (CSP) solver for automatically generating and solving crossword puzzles. The program fills a crossword grid using a set of words and enforces consistency between intersecting clues.
 
 Features
+
 Solves crossword puzzles using:
 
 Node consistency (unary constraints)
@@ -21,6 +23,7 @@ Graphical output (renders the filled crossword as an image)
 Text-based printing of the solution in terminal
 
 Requirements
+
 Python 3.8+
 
 Pillow (for saving the crossword as an image)
@@ -34,6 +37,7 @@ pip install -r requirements.txt
 Note: The crossword module and data files (structure and word list) must be present.
 
 Usage
+
 bash
 Copy
 Edit
@@ -64,15 +68,18 @@ structure.txt — Grid layout for the crossword.
 assets/fonts/ — Font used to render letters in the output image.
 
 Limitations
+
 Solving time may increase significantly for large or highly constrained grids.
 
 The solver does not currently handle clues or definitions — only structure and letter matching.
 
 Status
-🟡 In progress. Most core logic is implemented, but some issues may remain with variable ordering or consistency. Contributions and suggestions are welcome.
+
+In progress. Most core logic is implemented, but some issues may remain with variable ordering or consistency. Contributions and suggestions are welcome.
 
 These are the structures of each file of this project:
-📦 requirements.txt
+
+requirements.txt
 
 Minimal dependencies needed to run the project:
 
