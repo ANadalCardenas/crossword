@@ -1,4 +1,5 @@
 import sys
+from pprint import pprint
 from itertools import product
 from collections import defaultdict
 
@@ -185,23 +186,18 @@ class CrosswordCreator():
             for word_x in words_x:
                 # Calculates the intersection between the words already inserted and the current word.
                 # Checks if the length of "word" is equal than the "length" parameter of current Variable
-                if len(word_x) != var_x.length or (values & word_x):
+                if len(word_x) != var_x.length or (word_x in values):
                     return False
-                else:
-                    values.add(word_x)
+                values.add(word_x)
             # Checks if the overlap cells have at least one valid option of words for both Variables
             for var_y, words_y in assignment.items():
                 if not var_x.__eq__(var_y):
                     overlap_cells = self.crossword.overlaps[var_x,var_y]
                     if overlap_cells:
-                        matching_overlap = False
-                        for word_x, word_y in product(words_x, words_y):
-                            if word_x[overlap_cells[0]] == word_y[overlap_cells[1]]:
-                                matching_overlap = True
-                                break
-                        if not matching_overlap:
+                        i, j = overlap_cells
+                        if word_x[i] != words_y[j]:
                             return False
-            return True
+        return True
         
 
 
@@ -213,8 +209,6 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
         # Checks if current var has already an assignment value
-        print("var :",var)
-        print("assignment :", assignment)
         if var in assignment.keys():
             return [0]
         # Created de dictionary where the function will order the words of the domain of "var". At first, all values have a 0 value. 
@@ -253,9 +247,6 @@ class CrosswordCreator():
         # Gets the variables that are not yet in assignment.
         sub_domains = {k: v for k, v in self.domains.items() if k not in assignment}
         # Calcs the ordered list of domain's values with the above function
-        
-        for k in sub_domains.keys():
-            print("k :",k)
         remaining_values = {k: {self.order_domain_values(k, assignment)[0]} for k in sub_domains.keys()}
         # Orders the last dictionary to find the variable with the lowest degree
         ordered_remaining_values = dict(sorted(remaining_values.items(), key=lambda item: item[1]))
@@ -269,7 +260,7 @@ class CrosswordCreator():
             degree_variables = {k : sum(self.crossword.overlaps[var,k]) for k in self.domains.keys() if self.crossword.overlaps[var,k] and not var.__eq__(k)}
         
         
-        return dict(sorted(degree_variables.items(), key=lambda item: item[1], reverse = True))[0]
+        return next(iter(sorted(degree_variables, key=degree_variables.get, reverse=True)))
 
 
     def backtrack(self, assignment):
@@ -281,16 +272,15 @@ class CrosswordCreator():
         if len(assignment) == len(self.crossword.variables):
             return assignment
         # Selects a no assignet variable
-        var = next(iter(self.select_unassigned_variable(assignment).keys()))
+        var = self.select_unassigned_variable(assignment)
         # Tries all its domains values (ordered by lower restriction)
         for value in self.order_domain_values(var, assignment):
             # Assigns a provisional value
             new_assignment = assignment.copy()
-            new_assignment[var] = value
-
-            # Comprovem si és consistent
+            new_assignment[var] = {value}
+            # checks for consistency
             if self.consistent(new_assignment):
-                # Opcional: inference amb AC-3
+                # Optional: inference with ac3 function
                 domains_backup = self.domains.copy()
                 self.domains[var] = {value}
                 if self.ac3({(neighbor, var) for neighbor in self.crossword.neighbors(var)}):
@@ -298,8 +288,7 @@ class CrosswordCreator():
                 if result is not None:
                     return result
                 self.domains = domains_backup
-
-        # Si cap valor condueix a una solució, retrocedim
+        # If there is no solution, it returns None
         return None
 
 def main():
